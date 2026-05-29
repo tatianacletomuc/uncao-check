@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#000000">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-title" content="Voltz Checklist">
+<title>Voltz Checklist</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+:root {
+  --black: #000; --yellow: #F5D000; --yellow-dk: #C9A800;
+  --white: #fff; --g1: #1a1a1a; --g2: #2a2a2a; --g3: #3a3a3a;
+  --muted: #888; --border: #333; --green: #25D366;
+  --done-bg: #0d1a0f; --done-bd: #2d6a4f; --done-tx: #4a8c6a;
+}
+body { font-family: 'Barlow', sans-serif; background: var(--black); color: var(--white); min-height: 100vh; }
+
+/* ── cada "tela" é um div normal que some/aparece ── */
+.page { display: none; min-height: 100vh; flex-direction: column; }
+.page.on { display: flex; }
+
+/* SPLASH */
+#p-splash { align-items: center; justify-content: center; background: var(--black); }
+.sp-title { font-family: 'Barlow Condensed', sans-serif; font-size: 54px; font-weight: 800; color: var(--white); text-transform: uppercase; text-align: center; line-height: 1; }
+.sp-sub   { font-family: 'Barlow Condensed', sans-serif; font-size: 54px; font-weight: 800; color: var(--yellow); text-transform: uppercase; line-height: 1; display: flex; align-items: center; justify-content: center; gap: 2px; }
+.sp-tag   { font-size: 13px; color: var(--muted); letter-spacing: .1em; margin-top: 6px; text-align: center; }
+.sp-bar   { width: 180px; height: 3px; background: var(--g2); border-radius: 99px; margin-top: 40px; overflow: hidden; }
+.sp-fill  { height: 100%; width: 0; background: var(--yellow); border-radius: 99px; animation: spLoad 1.8s ease forwards; }
+@keyframes spLoad { to { width: 100%; } }
+
+/* HEADER */
+.hdr { background: var(--g1); padding: 16px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
+.logo { font-family: 'Barlow Condensed', sans-serif; font-size: 20px; font-weight: 800; color: var(--white); text-transform: uppercase; letter-spacing: 1px; }
+.logo b { color: var(--yellow); font-weight: 800; }
+
+/* LOGIN */
+#p-login { background: var(--black); }
+.body-pad { flex: 1; padding: 28px 20px 40px; overflow-y: auto; }
+.pg-title { font-family: 'Barlow Condensed', sans-serif; font-size: 28px; font-weight: 700; color: var(--white); text-transform: uppercase; margin-bottom: 4px; }
+.pg-sub   { font-size: 13px; color: var(--muted); margin-bottom: 28px; }
+.field { margin-bottom: 18px; }
+.field label { display: block; font-size: 11px; font-weight: 600; color: var(--yellow); letter-spacing: .1em; text-transform: uppercase; margin-bottom: 7px; }
+.field input, .field select {
+  width: 100%; padding: 14px; background: var(--g2); border: 1px solid var(--border);
+  border-radius: 8px; font-family: 'Barlow', sans-serif; font-size: 16px; color: var(--white);
+  outline: none; -webkit-appearance: none; appearance: none;
+}
+.field select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%23888' d='M6 8L0 0h12z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; }
+.field input::placeholder { color: #555; }
+.field select option { background: #1a1a1a; }
+.field input:focus, .field select:focus { border-color: var(--yellow); }
+.btn-main { width: 100%; padding: 16px; background: var(--yellow); color: var(--black); border: none; border-radius: 8px; font-family: 'Barlow Condensed', sans-serif; font-size: 18px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; cursor: pointer; margin-top: 4px; }
+.btn-main:active { opacity: .85; }
+
+/* CHECKLIST */
+#p-check { background: var(--black); }
+.chk-hdr { background: var(--g1); padding: 14px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
+.back { background: none; border: none; color: var(--yellow); font-size: 26px; cursor: pointer; padding: 4px 10px 4px 0; line-height: 1; }
+.chk-hdr-info { flex: 1; min-width: 0; }
+.chk-title { font-family: 'Barlow Condensed', sans-serif; font-size: 17px; font-weight: 700; color: var(--white); text-transform: uppercase; }
+.chk-sub   { font-size: 11px; color: var(--muted); }
+.prog-wrap { padding: 12px 20px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
+.prog-row  { display: flex; justify-content: space-between; font-size: 12px; color: var(--muted); margin-bottom: 5px; }
+.prog-row span:last-child { color: var(--yellow); font-weight: 600; }
+.prog-bg   { height: 4px; background: var(--g2); border-radius: 99px; overflow: hidden; }
+.prog-bar  { height: 100%; background: var(--yellow); border-radius: 99px; transition: width .4s; }
+.chk-body  { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 16px 20px 0; }
+.sec-lbl   { font-family: 'Barlow Condensed', sans-serif; font-size: 13px; font-weight: 700; color: var(--yellow); text-transform: uppercase; letter-spacing: .08em; padding: 14px 0 8px; border-top: 1px solid var(--border); margin-top: 4px; }
+.sec-lbl:first-child { border-top: none; padding-top: 0; }
+.grp-lbl   { font-size: 11px; font-weight: 600; color: var(--muted); letter-spacing: .06em; text-transform: uppercase; margin: 10px 0 6px; }
+.item      { background: var(--g2); border: 1px solid var(--border); border-radius: 9px; display: flex; align-items: flex-start; gap: 12px; padding: 14px 13px; margin-bottom: 8px; cursor: pointer; user-select: none; -webkit-user-select: none; }
+.item:active { opacity: .7; }
+.item.done  { background: var(--done-bg); border-color: var(--done-bd); }
+.item.done .itxt { text-decoration: line-through; color: var(--done-tx); }
+.item.warn  { border-left: 3px solid #e67e22; }
+.chk-box   { width: 22px; min-width: 22px; height: 22px; border: 2px solid var(--border); border-radius: 6px; margin-top: 1px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: background .15s, border-color .15s; }
+.item.done .chk-box { background: var(--yellow); border-color: var(--yellow); }
+.ck-svg    { display: none; width: 12px; height: 12px; }
+.item.done .ck-svg { display: block; }
+.itxt      { flex: 1; font-size: 14px; line-height: 1.5; color: var(--white); }
+.obs-wrap  { margin-top: 8px; }
+.obs-lbl   { font-size: 11px; font-weight: 600; color: var(--yellow); letter-spacing: .1em; text-transform: uppercase; margin-bottom: 7px; }
+.obs-wrap textarea { width: 100%; min-height: 80px; padding: 12px 13px; font-family: 'Barlow', sans-serif; font-size: 14px; color: var(--white); background: var(--g2); border: 1px solid var(--border); border-radius: 9px; resize: vertical; outline: none; line-height: 1.5; }
+.obs-wrap textarea:focus { border-color: var(--yellow); }
+.obs-wrap textarea::placeholder { color: #555; }
+.chk-footer { padding: 14px 20px 28px; border-top: 1px solid var(--border); flex-shrink: 0; }
+.dest-lbl  { font-size: 11px; font-weight: 600; color: var(--yellow); letter-spacing: .08em; text-transform: uppercase; margin-bottom: 6px; }
+.dest-row  { margin-bottom: 10px; }
+.dest-row input { width: 100%; padding: 12px 13px; background: var(--g2); border: 1px solid var(--border); border-radius: 8px; font-family: 'Barlow', sans-serif; font-size: 16px; color: var(--white); outline: none; -webkit-appearance: none; }
+.dest-row input::placeholder { color: #555; }
+.btn-wpp   { width: 100%; padding: 14px; background: var(--green); color: #fff; border: none; border-radius: 9px; font-family: 'Barlow Condensed', sans-serif; font-size: 16px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 9px; }
+.btn-wpp:active { opacity: .85; }
+.btn-rst   { width: 100%; margin-top: 8px; padding: 11px; background: transparent; color: var(--muted); border: 1px solid var(--border); border-radius: 8px; font-family: 'Barlow', sans-serif; font-size: 13px; cursor: pointer; }
+.wpp-ico   { width: 19px; height: 19px; fill: #fff; flex-shrink: 0; }
+.spacer    { height: 16px; }
+</style>
+</head>
+<body>
+
+<!-- SPLASH -->
+<div class="page on" id="p-splash" onclick="leaveSplash()" style="cursor:pointer;">
+  <div style="display:flex;flex-direction:column;align-items:center;">
+    <div class="sp-title">Unção</div>
+    <div class="sp-sub">VOLT<span style="color:#fff;">Z</span><span style="font-size:40px;margin-left:2px;">⚡</span></div>
+    <div class="sp-tag">Energia para servir</div>
+    <div class="sp-bar"><div class="sp-fill"></div></div>
+    <button onclick="leaveSplash()" style="margin-top:32px;padding:14px 40px;background:var(--yellow);color:var(--black);border:none;border-radius:8px;font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:800;letter-spacing:1px;text-transform:uppercase;cursor:pointer;">
+      ENTRAR →
+    </button>
+  </div>
+</div>
+
+<!-- LOGIN -->
+<div class="page" id="p-login">
+  <div class="hdr">
+    <div class="logo">UNÇÃO <b>VOLTZ</b></div>
+  </div>
+  <div class="body-pad">
+    <div class="pg-title">Identificação</div>
+    <div class="pg-sub">Informe seus dados para continuar</div>
+    <div class="field">
+      <label>Seu nome</label>
+      <input type="text" id="inp-name" placeholder="Ex: João Silva" autocomplete="off" autocorrect="off" autocapitalize="words"/>
+    </div>
+    <div class="field">
+      <label>Área / Equipe</label>
+      <select id="inp-area">
+        <option value="">Selecione sua área...</option>
+        <option value="coordenacao">Coordenação de Culto</option>
+        <option value="projecao">Projeção</option>
+        <option value="estacionamento">Estacionamento</option>
+      </select>
+    </div>
+    <button class="btn-main" onclick="doLogin()">Entrar →</button>
+  </div>
+</div>
+
+<!-- CHECKLIST -->
+<div class="page" id="p-check">
+  <div class="chk-hdr">
+    <button class="back" onclick="goBack()">←</button>
+    <div class="chk-hdr-info">
+      <div class="chk-title" id="ck-title"></div>
+      <div class="chk-sub"   id="ck-sub"></div>
+    </div>
+  </div>
+  <div class="prog-wrap">
+    <div class="prog-row">
+      <span id="prog-lbl">0 concluídas</span>
+      <span id="prog-pct">0%</span>
+    </div>
+    <div class="prog-bg"><div class="prog-bar" id="prog-bar" style="width:0%"></div></div>
+  </div>
+  <div class="chk-body" id="chk-body">
+    <div id="list"></div>
+    <div class="obs-wrap">
+      <div class="obs-lbl">Observações</div>
+      <textarea id="obs" placeholder="Ocorrências, observações ou informações relevantes..."></textarea>
+    </div>
+    <div class="spacer"></div>
+  </div>
+  <div class="chk-footer">
+    <div class="dest-lbl">Enviar para (WhatsApp)</div>
+    <div class="dest-row" style="display:flex;align-items:center;gap:0;">
+      <span style="padding:12px 12px;background:var(--g2);border:1px solid var(--border);border-right:none;border-radius:8px 0 0 8px;font-size:16px;color:var(--muted);white-space:nowrap;">+55</span>
+      <input type="tel" id="wpp-dest" placeholder="21999999999" style="border-radius:0 8px 8px 0!important;border-left:none!important;"/>
+    </div>
+    <button class="btn-wpp" onclick="sendWpp()">
+      <svg class="wpp-ico" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.554 4.118 1.528 5.849L.057 23.572a.75.75 0 0 0 .92.92l5.723-1.471A11.95 11.95 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.75a9.713 9.713 0 0 1-4.944-1.349l-.355-.211-3.676.944.962-3.58-.232-.369A9.712 9.712 0 0 1 2.25 12C2.25 6.615 6.615 2.25 12 2.25S21.75 6.615 21.75 12 17.385 21.75 12 21.75z"/></svg>
+      Enviar pelo WhatsApp
+    </button>
+    <button class="btn-rst" onclick="resetCheck()">↺ Reiniciar checklist</button>
+  </div>
+</div>
+
+<script>
+const CL = {
+  coordenacao: {
+    title: "Coordenação de Culto",
+    sections: [
+      { label: "⏰ Antes do Culto — chegar 1h antes", groups: [
+        { name: "Abertura e equipe", tasks: [
+          {t:"Reunir a equipe e fazer o momento de oração"},
+          {t:"Direcionar as atividades da equipe"},
+          {t:"Realizar check-in no aplicativo Voluts"},
+          {t:"Conferir se a escala foi definida no Voluts (mín. 2 dias de antecedência)"}
+        ]},
+        { name: "Estrutura e acessos", tasks: [
+          {t:"Abrir cadeados (portão principal e porta lateral esquerda do altar)"},
+          {t:"Abrir as grades das salas da Saúde e Loja"},
+          {t:"Checar a organização do estacionamento dos fundos"}
+        ]},
+        { name: "Água e climatização", tasks: [
+          {t:"Ligar a bomba"},
+          {t:"Verificar o nível da água do bebedouro"},
+          {t:"Ligar os ar-condicionados do templo e ajustar a temperatura"},
+          {t:"Desligar a bomba após a verificação"}
+        ]},
+        { name: "Limpeza e organização do altar", tasks: [
+          {t:"Retirar a poeira dos púlpitos, soleira do altar e TV do timer"},
+          {t:"Repor os envelopes de oferta"}
+        ]},
+        { name: "Banheiros (fiscalizar a cada 30 min)", tasks: [
+          {t:"Papel higiênico"},{t:"Papel toalha"},{t:"Sabonete"},{t:"Lixeiras"},
+          {t:"(Feminino) desodorante e enxaguante bucal"}
+        ]},
+        { name: "Finalização do pré-culto", tasks: [
+          {t:"Preencher o cronograma do culto"}
+        ]}
+      ]},
+      { label: "🙌 Durante o Culto", groups: [
+        { name: "Acompanhamento geral", tasks: [
+          {t:"Ligar a TV do pátio e ajustar o volume (cantina/pátio)"},
+          {t:"Manter o portão principal encostado após o louvor"},
+          {t:"Acompanhar e manter limpo o banheiro do check-in (a cada 30 min)"},
+          {t:"Verificar banheiros gerais a cada 30 min"}
+        ]},
+        { name: "Altar e ministração", tasks: [
+          {t:"Colocar púlpito e água sem rótulo para o preletor após o Unção News (se não houver vídeo/atividade)"},
+          {t:"⚠️ Para o Pr. Bruno: utilizar a caneca", warn:true}
+        ]},
+        { name: "Supervisões", tasks: [
+          {t:"Supervisionar as salas Kids (pátio)"},
+          {t:"Auxiliar no momento da oferta e enviar foto da equipe no grupo"},
+          {t:"Realizar contagem de público (templo, pátio e salas Kids)"}
+        ]},
+        { name: "Situações específicas", tasks: [
+          {t:"Crianças chorando no templo → acionar o responsável pela abordagem"},
+          {t:"Apelo com conversão/reconciliação → acionar o dispositivo de confetes"},
+          {t:"Qualquer intercorrência → comunicar imediatamente ao Supervisor"}
+        ]}
+      ]},
+      { label: "🌙 Após o Culto", groups: [
+        { name: "", tasks: [
+          {t:"Retirar o púlpito"},{t:"Realizar limpeza do templo"},
+          {t:"Esvaziar lixeiras (templo, pátio e salas)"},
+          {t:"Desligar ar-condicionados (templo e salas)"},
+          {t:"Verificar nível da água do bebedouro"},{t:"Checar as lixeiras"},
+          {t:"Colocar os rádios para carregar"},
+          {t:"Realizar check-out no aplicativo Voluts"}
+        ]}
+      ]}
+    ]
+  },
+  projecao: {
+    title: "Projeção",
+    sections: [
+      { label: "📽️ Checklist de Projeção", groups: [
+        { name: "", tasks: [
+          {t:"Check-in no Voluts"},
+          {t:"Oração (antes de servir)"},
+          {t:"Ligar/Conferir os telões e a TV do timer no altar"},
+          {t:"Iniciar o computador (verificar espaço disponível em casos de travamento)"},
+          {t:"Conferir projeção do cronômetro"},
+          {t:"Organizar os louvores na fila de projeção"},
+          {t:"Conferir as mídias disponíveis no Drive x Cronograma (verificar e organizar todas as mídias e textos que serão ministrados)"},
+          {t:"Fazer testes de projeção nos telões antes do início dos cultos (imagens de fundo, news, vídeos extras, etc.)"}
+        ]}
+      ]}
+    ]
+  },
+  estacionamento: {
+    title: "Estacionamento",
+    sections: [
+      { label: "🅿️ Estacionamento 1 — Lateral da Igreja", groups: [
+        { name: "Antes da chegada (1h30 — 1h00 antes)", tasks: [
+          {t:"Designar equipe responsável"},
+          {t:"Abrir portões e verificar iluminação"},
+          {t:"Conferir limpeza e ausência de obstáculos"},
+          {t:"Posicionar cones para organização das vagas"},
+          {t:"Definir fluxo de entrada e saída"}
+        ]},
+        { name: "Durante a chegada", tasks: [
+          {t:"Recepcionista sinaliza com colete refletivo"},
+          {t:"Orientar motoristas a estacionar de frente e alinhado"},
+          {t:"Priorizar ocupação total das fileiras (sem vagas perdidas)"},
+          {t:"Manter corredor central livre para circulação"},
+          {t:"Demonstrar cordialidade e atenção"}
+        ]},
+        { name: "⚠️ Observações", tasks: [
+          {t:"Evitar manobras perigosas"},
+          {t:"Atenção a crianças e idosos"},
+          {t:"Em caso de lotação, direcionar ao próximo estacionamento"}
+        ]}
+      ]},
+      { label: "🅿️ Estacionamento 2 — Frente da Igreja", groups: [
+        { name: "Antes da chegada", tasks: [
+          {t:"Reservar vagas preferenciais com cones"},
+          {t:"Garantir acesso livre à entrada principal"},
+          {t:"Posicionar voluntário fixo no local"}
+        ]},
+        { name: "Durante a chegada — Priorizar", tasks: [
+          {t:"Idosos"},
+          {t:"Pessoas com deficiência"},
+          {t:"Gestantes"},
+          {t:"Famílias com bebês"},
+          {t:"Permitir paradas rápidas para desembarque"},
+          {t:"Evitar permanência prolongada de veículos não prioritários"},
+          {t:"Manter fluxo constante"}
+        ]},
+        { name: "⚠️ Observações", tasks: [
+          {t:"Nunca bloquear a entrada principal", warn:true},
+          {t:"Garantir acessibilidade segura até a porta"},
+          {t:"Manter postura acolhedora e respeitosa"}
+        ]}
+      ]},
+      { label: "🅿️ Estacionamento 3 — Outra Lateral", groups: [
+        { name: "Antes da chegada", tasks: [
+          {t:"Verificar condições do espaço"},
+          {t:"Abrir acesso apenas quando necessário"},
+          {t:"Posicionar equipe de direcionamento"}
+        ]},
+        { name: "Durante a chegada", tasks: [
+          {t:"Usar somente após lotação dos estacionamentos 1 e 2"},
+          {t:"Orientar estacionamento compacto para maior capacidade"},
+          {t:"Garantir iluminação e segurança"},
+          {t:"Manter comunicação com a equipe principal"}
+        ]},
+        { name: "⚠️ Observações", tasks: [
+          {t:"Atenção redobrada se for área menos visível"},
+          {t:"Manter presença constante de voluntários"},
+          {t:"Auxiliar pedestres no trajeto até a igreja"}
+        ]}
+      ]},
+      { label: "👕 Padrão da Equipe", groups: [
+        { name: "", tasks: [
+          {t:"Chegar com antecedência mínima de 1h30"},
+          {t:"Usar colete refletivo ou identificação"},
+          {t:"Manter postura cordial e servidora"},
+          {t:"Evitar uso de celular durante o serviço"},
+          {t:"Trabalhar sempre em dupla quando possível"},
+          {t:"Comunicação clara por gestos ou rádio"}
+        ]}
+      ]},
+      { label: "🚨 Situações Especiais", groups: [
+        { name: "Chuva intensa", tasks: [
+          {t:"Priorizar vagas próximas da entrada"},
+          {t:"Auxiliar desembarque seguro"}
+        ]},
+        { name: "Emergência", tasks: [
+          {t:"Manter corredor livre", warn:true},
+          {t:"Informar imediatamente a liderança", warn:true}
+        ]},
+        { name: "Evento com grande público", tasks: [
+          {t:"Ativar todos os estacionamentos"},
+          {t:"Reforçar equipe e sinalização"}
+        ]}
+      ]}
+    ]
+  }
+};
+
+const LABELS = { coordenacao:'Coordenação de Culto', projecao:'Projeção', estacionamento:'Estacionamento' };
+let user = {name:'',area:'',key:''};
+let curKey = null, state = [];
+
+function go(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('on'));
+  document.getElementById(id).classList.add('on');
+  window.scrollTo(0,0);
+}
+
+function leaveSplash() {
+  go('p-login');
+}
+
+function doLogin() {
+  var name = document.getElementById('inp-name').value.trim();
+  var key  = document.getElementById('inp-area').value;
+  if (!name) { alert('Informe seu nome.'); return; }
+  if (!key)  { alert('Selecione sua área.'); return; }
+  user = { name, area: LABELS[key], key };
+  if (CL[key]) { openCL(key); }
+  else { alert('Este checklist ainda não está disponível.'); }
+}
+
+function goBack() { go('p-login'); }
+
+function flatTasks(key) {
+  var arr = [];
+  CL[key].sections.forEach(s => s.groups.forEach(g => g.tasks.forEach(t => arr.push(t))));
+  return arr;
+}
+
+function openCL(key) {
+  curKey = key;
+  state = flatTasks(key).map(() => false);
+  document.getElementById('ck-title').textContent = CL[key].title;
+  document.getElementById('ck-sub').textContent   = user.name + ' · ' + user.area;
+  document.getElementById('obs').value = '';
+  renderCL();
+  go('p-check');
+  document.getElementById('chk-body').scrollTop = 0;
+}
+
+function renderCL() {
+  var list = document.getElementById('list');
+  list.innerHTML = '';
+  var idx = 0;
+  CL[curKey].sections.forEach(sec => {
+    var sd = document.createElement('div');
+    sd.className = 'sec-lbl'; sd.textContent = sec.label; list.appendChild(sd);
+    sec.groups.forEach(grp => {
+      if (grp.name) {
+        var gd = document.createElement('div');
+        gd.className = 'grp-lbl'; gd.textContent = grp.name; list.appendChild(gd);
+      }
+      grp.tasks.forEach(task => {
+        var i = idx++;
+        var d = document.createElement('div');
+        d.className = 'item' + (state[i]?' done':'') + (task.warn?' warn':'');
+        d.innerHTML = '<div class="chk-box"><svg class="ck-svg" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#000" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="itxt">'+task.t+'</span>';
+        (function(ii){ d.addEventListener('click', function(){ state[ii]=!state[ii]; renderCL(); }); })(i);
+        list.appendChild(d);
+      });
+    });
+  });
+  var done=state.filter(Boolean).length, total=state.length, pct=Math.round(done/total*100);
+  document.getElementById('prog-lbl').textContent = done+' de '+total+' concluídas';
+  document.getElementById('prog-pct').textContent = pct+'%';
+  document.getElementById('prog-bar').style.width  = pct+'%';
+}
+
+function resetCheck() {
+  if (!confirm('Reiniciar todas as tarefas?')) return;
+  state = state.map(()=>false);
+  document.getElementById('obs').value='';
+  renderCL();
+  document.getElementById('chk-body').scrollTop=0;
+}
+
+function sendWpp() {
+  var dest = '55' + document.getElementById('wpp-dest').value.trim().replace(/\D/g,'');
+  if (dest.length < 12) { alert('Informe o DDD e número. Ex: 21999999999'); return; }
+  var cl   = CL[curKey];
+  var now  = new Date();
+  var date = now.toLocaleDateString('pt-BR',{weekday:'long',day:'2-digit',month:'2-digit',year:'numeric'});
+  var done = state.filter(Boolean).length, total=state.length;
+  var obs  = document.getElementById('obs').value.trim();
+  var msg  = '*Checklist — '+cl.title+'*\n'+date+'\n';
+  msg += '*Responsável:* '+user.name+' ('+user.area+')\n';
+  msg += '*Progresso:* '+done+' de '+total+' tarefas concluídas\n';
+  var si=0;
+  cl.sections.forEach(sec=>{
+    msg+='\n*'+sec.label+'*\n';
+    sec.groups.forEach(grp=>{
+      if(grp.name) msg+='_'+grp.name+'_\n';
+      grp.tasks.forEach(task=>{
+        var i=si++;
+        msg+=(state[i]?'\u2022 *'+task.t+'*: Feito':'\u25e6 '+task.t+': Pendente')+'\n';
+      });
+    });
+  });
+  if(obs) msg+='\n*Observações:*\n'+obs;
+  window.open('https://wa.me/'+dest+'?text='+encodeURIComponent(msg),'_blank');
+}
+</script>
+</body>
+</html>
