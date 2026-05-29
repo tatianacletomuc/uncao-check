@@ -451,7 +451,7 @@ function sendWpp() {
       if(grp.name) msg+='_'+grp.name+'_\n';
       grp.tasks.forEach(task=>{
         var i=si++;
-        msg+=(state[i]?'\u2022 *'+task.t+'*: Feito':'\u25e6 '+task.t+': Pendente')+'\n';
+        msg+=(state[i]?'\u2705 *'+task.t+'*':'\u2B1C '+task.t)+'\n';
       });
     });
   });
