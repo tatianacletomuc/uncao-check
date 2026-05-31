@@ -268,88 +268,82 @@ const CL = {
   estacionamento: {
     title: "Estacionamento",
     sections: [
-      { label: "🅿️ Estacionamento 1 — Lateral da Igreja", groups: [
-        { name: "Antes da chegada (1h30 — 1h00 antes)", tasks: [
-          {t:"Designar equipe responsável"},
-          {t:"Abrir portões e verificar iluminação"},
-          {t:"Conferir limpeza e ausência de obstáculos"},
-          {t:"Posicionar cones para organização das vagas"},
-          {t:"Definir fluxo de entrada e saída"}
+      { label: "⏰ Antes do Culto/Evento", groups: [
+        { name: "Equipe Geral", tasks: [
+          {t:"Chegar com 1h30 de antecedência"},
+          {t:"Vestir colete refletivo ou identificação"},
+          {t:"Conferir rádios/comunicação da equipe"},
+          {t:"Definir responsáveis por cada estacionamento"}
         ]},
-        { name: "Durante a chegada", tasks: [
-          {t:"Recepcionista sinaliza com colete refletivo"},
-          {t:"Orientar motoristas a estacionar de frente e alinhado"},
-          {t:"Priorizar ocupação total das fileiras (sem vagas perdidas)"},
-          {t:"Manter corredor central livre para circulação"},
-          {t:"Demonstrar cordialidade e atenção"}
+        { name: "🅿️ Est. 1 — Lateral da Igreja — Preparação", tasks: [
+          {t:"Abrir portões"},
+          {t:"Verificar iluminação"},
+          {t:"Verificar limpeza do local"},
+          {t:"Retirar obstáculos"},
+          {t:"Posicionar cones"},
+          {t:"Organizar fluxo de entrada"},
+          {t:"Organizar fluxo de saída"}
         ]},
-        { name: "⚠️ Observações", tasks: [
-          {t:"Evitar manobras perigosas"},
-          {t:"Atenção a crianças e idosos"},
-          {t:"Em caso de lotação, direcionar ao próximo estacionamento"}
-        ]}
-      ]},
-      { label: "🅿️ Estacionamento 2 — Frente da Igreja", groups: [
-        { name: "Antes da chegada", tasks: [
+        { name: "🅿️ Est. 2 — Frente da Igreja — Preparação", tasks: [
           {t:"Reservar vagas preferenciais com cones"},
           {t:"Garantir acesso livre à entrada principal"},
-          {t:"Posicionar voluntário fixo no local"}
+          {t:"Posicionar voluntário fixo"}
         ]},
-        { name: "Durante a chegada — Priorizar", tasks: [
-          {t:"Idosos"},
-          {t:"Pessoas com deficiência"},
-          {t:"Gestantes"},
-          {t:"Famílias com bebês"},
-          {t:"Permitir paradas rápidas para desembarque"},
-          {t:"Evitar permanência prolongada de veículos não prioritários"},
-          {t:"Manter fluxo constante"}
-        ]},
-        { name: "⚠️ Observações", tasks: [
-          {t:"Nunca bloquear a entrada principal", warn:true},
-          {t:"Garantir acessibilidade segura até a porta"},
-          {t:"Manter postura acolhedora e respeitosa"}
-        ]}
-      ]},
-      { label: "🅿️ Estacionamento 3 — Outra Lateral", groups: [
-        { name: "Antes da chegada", tasks: [
+        { name: "🅿️ Est. 3 — Outra Lateral — Preparação", tasks: [
           {t:"Verificar condições do espaço"},
-          {t:"Abrir acesso apenas quando necessário"},
-          {t:"Posicionar equipe de direcionamento"}
-        ]},
-        { name: "Durante a chegada", tasks: [
-          {t:"Usar somente após lotação dos estacionamentos 1 e 2"},
-          {t:"Orientar estacionamento compacto para maior capacidade"},
-          {t:"Garantir iluminação e segurança"},
-          {t:"Manter comunicação com a equipe principal"}
-        ]},
-        { name: "⚠️ Observações", tasks: [
-          {t:"Atenção redobrada se for área menos visível"},
-          {t:"Manter presença constante de voluntários"},
-          {t:"Auxiliar pedestres no trajeto até a igreja"}
+          {t:"Verificar iluminação"},
+          {t:"Posicionar equipe de apoio"}
         ]}
       ]},
-      { label: "👕 Padrão da Equipe", groups: [
-        { name: "", tasks: [
-          {t:"Chegar com antecedência mínima de 1h30"},
-          {t:"Usar colete refletivo ou identificação"},
-          {t:"Manter postura cordial e servidora"},
+      { label: "🚦 Durante a Operação", groups: [
+        { name: "🅿️ Est. 1 — Lateral da Igreja", tasks: [
+          {t:"Recepcionar veículos na entrada"},
+          {t:"Direcionar estacionamento alinhado"},
+          {t:"Preencher fileiras sem deixar vagas perdidas"},
+          {t:"Manter corredor central livre"},
+          {t:"Monitorar circulação de pedestres"},
+          {t:"Direcionar ao Est. 3 quando atingir lotação"}
+        ]},
+        { name: "🅿️ Est. 2 — Frente da Igreja", tasks: [
+          {t:"Direcionar idosos para vagas prioritárias"},
+          {t:"Direcionar PCD para vagas prioritárias"},
+          {t:"Direcionar gestantes para vagas prioritárias"},
+          {t:"Direcionar famílias com bebês para vagas prioritárias"},
+          {t:"Auxiliar desembarques rápidos"},
+          {t:"Monitorar para evitar ocupação indevida das vagas prioritárias"},
+          {t:"Garantir que a entrada principal permaneça livre", warn:true}
+        ]},
+        { name: "🅿️ Est. 3 — Outra Lateral", tasks: [
+          {t:"Abrir acesso somente quando necessário"},
+          {t:"Receber veículos direcionados dos demais estacionamentos"},
+          {t:"Organizar estacionamento compacto"},
+          {t:"Manter comunicação com a equipe principal"},
+          {t:"Auxiliar pedestres no trajeto até a igreja"}
+        ]},
+        { name: "Geral — Durante toda a operação", tasks: [
+          {t:"Monitorar circulação de crianças"},
+          {t:"Auxiliar idosos quando necessário"},
+          {t:"Evitar congestionamentos internos"},
+          {t:"Manter corredores livres"},
           {t:"Evitar uso de celular durante o serviço"},
-          {t:"Trabalhar sempre em dupla quando possível"},
-          {t:"Comunicação clara por gestos ou rádio"}
+          {t:"Trabalhar em dupla sempre que possível"},
+          {t:"Informar liderança sobre qualquer ocorrência"}
         ]}
       ]},
       { label: "🚨 Situações Especiais", groups: [
-        { name: "Chuva intensa", tasks: [
-          {t:"Priorizar vagas próximas da entrada"},
-          {t:"Auxiliar desembarque seguro"}
+        { name: "Chuva", tasks: [
+          {t:"Direcionar veículos para vagas mais próximas da entrada"},
+          {t:"Auxiliar desembarque de idosos, gestantes e famílias"}
         ]},
         { name: "Emergência", tasks: [
-          {t:"Manter corredor livre", warn:true},
-          {t:"Informar imediatamente a liderança", warn:true}
+          {t:"Liberar imediatamente corredores de acesso", warn:true},
+          {t:"Acionar liderança responsável", warn:true}
         ]},
-        { name: "Evento com grande público", tasks: [
-          {t:"Ativar todos os estacionamentos"},
-          {t:"Reforçar equipe e sinalização"}
+        { name: "Evento de Grande Público", tasks: [
+          {t:"Abrir os três estacionamentos"},
+          {t:"Reforçar sinalização"},
+          {t:"Reforçar equipe de direcionamento"},
+          {t:"Monitorar ocupação dos estacionamentos em tempo real"}
         ]}
       ]}
     ]
