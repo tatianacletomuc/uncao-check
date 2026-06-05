@@ -485,7 +485,7 @@ function sendWpp() {
       if(grp.name) msg+='_'+grp.name+'_\n';
       grp.tasks.forEach(task=>{
         var i=si++;
-        msg+=(state[i]?'\u2705 *'+task.t+'*':'\u2B1C '+task.t)+'\n';
+        msg+=(state[i]?'✅ *'+task.t+'*':'⬜ '+task.t)+'\n';
       });
     });
   });
