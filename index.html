@@ -161,7 +161,7 @@ body { font-family: 'Barlow', sans-serif; background: var(--black); color: var(-
     <div id="list"></div>
     <div class="obs-wrap">
       <div class="obs-lbl">Observações</div>
-      <textarea id="obs" placeholder="Ocorrências, observações ou informações relevantes..."></textarea>
+      <textarea id="obs" placeholder="Ocorrências, observações ou informações relevantes..." oninput="saveProgress()"></textarea>
     </div>
     <div class="spacer"></div>
   </div>
@@ -383,12 +383,48 @@ function flatTasks(key) {
   return arr;
 }
 
+function saveProgress() {
+  var saved = { state: state, obs: document.getElementById('obs').value, user: user };
+  try { localStorage.setItem('voltz_' + curKey, JSON.stringify(saved)); } catch(e) {}
+}
+
+function loadProgress(key) {
+  try {
+    var raw = localStorage.getItem('voltz_' + key);
+    if (!raw) return null;
+    return JSON.parse(raw);
+  } catch(e) { return null; }
+}
+
+function clearProgress(key) {
+  try { localStorage.removeItem('voltz_' + key); } catch(e) {}
+}
+
 function openCL(key) {
   curKey = key;
-  state = flatTasks(key).map(() => false);
+  var saved = loadProgress(key);
+  var tasks = flatTasks(key);
+
+  if (saved && saved.state && saved.state.length === tasks.length) {
+    var pct = Math.round(saved.state.filter(Boolean).length / saved.state.length * 100);
+    if (pct > 0 && confirm('Você tem progresso salvo (' + pct + '% concluído). Deseja continuar de onde parou?')) {
+      state = saved.state;
+      document.getElementById('obs').value = saved.obs || '';
+    } else if (pct > 0) {
+      clearProgress(key);
+      state = tasks.map(() => false);
+      document.getElementById('obs').value = '';
+    } else {
+      state = tasks.map(() => false);
+      document.getElementById('obs').value = '';
+    }
+  } else {
+    state = tasks.map(() => false);
+    document.getElementById('obs').value = '';
+  }
+
   document.getElementById('ck-title').textContent = CL[key].title;
   document.getElementById('ck-sub').textContent   = user.name + ' · ' + user.area;
-  document.getElementById('obs').value = '';
   renderCL();
   go('p-check');
   document.getElementById('chk-body').scrollTop = 0;
@@ -411,7 +447,7 @@ function renderCL() {
         var d = document.createElement('div');
         d.className = 'item' + (state[i]?' done':'') + (task.warn?' warn':'');
         d.innerHTML = '<div class="chk-box"><svg class="ck-svg" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#000" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="itxt">'+task.t+'</span>';
-        (function(ii){ d.addEventListener('click', function(){ state[ii]=!state[ii]; renderCL(); }); })(i);
+        (function(ii){ d.addEventListener('click', function(){ state[ii]=!state[ii]; renderCL(); saveProgress(); }); })(i);
         list.appendChild(d);
       });
     });
@@ -424,6 +460,7 @@ function renderCL() {
 
 function resetCheck() {
   if (!confirm('Reiniciar todas as tarefas?')) return;
+  clearProgress(curKey);
   state = state.map(()=>false);
   document.getElementById('obs').value='';
   renderCL();
@@ -454,6 +491,15 @@ function sendWpp() {
   });
   if(obs) msg+='\n*Observações:*\n'+obs;
   window.open('https://wa.me/'+dest+'?text='+encodeURIComponent(msg),'_blank');
+  setTimeout(function(){
+    if (confirm('Relatório enviado! Deseja reiniciar o checklist?')) {
+      clearProgress(curKey);
+      state = state.map(()=>false);
+      document.getElementById('obs').value='';
+      renderCL();
+      document.getElementById('chk-body').scrollTop=0;
+    }
+  }, 800);
 }
 </script>
 </body>
